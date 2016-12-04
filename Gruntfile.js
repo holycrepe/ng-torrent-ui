@@ -97,7 +97,7 @@ module.exports = function (grunt) {
         options: {
           livereload: '<%= connect.options.livereload %>'
         }
-      },      
+      },
       views: {
         files: ['<%= yeoman.app %>/views/{,*/}*.html'],
         tasks: ['html2js'],
@@ -165,7 +165,6 @@ module.exports = function (grunt) {
       options: {
         port: 9000,
         // Change this to '0.0.0.0' to access the server from outside.
-        hostname: '0.0.0.0',
         livereload: 35729
       },
       proxies: [
@@ -434,7 +433,16 @@ module.exports = function (grunt) {
 
     uglify: {
       dist: {
-        options: { preserveComments: false }
+        options: {
+          preserveComments: true,
+          beautify: {
+            width: 80,
+            beautify: true
+          },
+          drop_debugger: false,
+          dead_code: false,
+          unused: false
+        }
       }
     },
 
@@ -589,19 +597,19 @@ module.exports = function (grunt) {
         singleRun: true
       }
     },
-    
-    typescript: { 
-        default: { 
+
+    typescript: {
+        default: {
           src: ['<%= yeoman.app %>/scripts/**/*.ts'],
-          dest: '.tmp/scripts/tsscripts.js', 
-          noImplicitAny: true, 
+          dest: '.tmp/scripts/tsscripts.js',
+          noImplicitAny: true,
           sourceMap: true,
-          inlineSourceMap: true,   
-          comments: true, 
-          sortOutput: true, 
-          noExternalResolve: true 
-        } 
-	} 
+          inlineSourceMap: true,
+          comments: true,
+          sortOutput: true,
+          noExternalResolve: true
+        }
+	}
   });
 
 
@@ -656,7 +664,7 @@ module.exports = function (grunt) {
     grunt.registerTask('prepare', [
     'newer:jshint',
     'newer:jsonlint',
-    //'test',
+    'test',
     'build',
     'processhtml:analytics'
     ]);
@@ -690,7 +698,7 @@ module.exports = function (grunt) {
    grunt.registerTask('build-demo', [
     'newer:jshint',
     'newer:jsonlint',
-    //'test',
+    'test',
     'clean:dist',
     'html2js',
     'wiredep:demo',
@@ -708,7 +716,7 @@ module.exports = function (grunt) {
     'uglify',
     'filerev',
     'usemin',
-    // 'htmlmin',
+     'htmlmin',
     'rename:demo'
     ]);
 
