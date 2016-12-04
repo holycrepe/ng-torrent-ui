@@ -43,8 +43,8 @@ angular
             allowHtml: true
         });
     })
-    .config(function( $compileProvider ) {   
-            $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|mailto|magnet):/);   
+    .config(function( $compileProvider ) {
+            $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|mailto|magnet):/);
     }).config(function($routeProvider) {
         $routeProvider
             .when('/', {
@@ -272,7 +272,7 @@ String.prototype.subCompare = function(needle, haystack, minLength) {
     var i,j;
     haystack = haystack || this.toLowerCase();
     minLength = minLength || 5;
-    
+
     for (i=needle.length; i>=minLength; i--) {
         for (j=0; j <= (needle.length - i); j++) {
             var substring = needle.substr(j,i);

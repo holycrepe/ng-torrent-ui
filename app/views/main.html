@@ -317,7 +317,7 @@
         <div class="modal-body">
             <tags-input focus-me="true" ng-model="starredItems" placeholder="{{'DLG_RSSDOWNLOADER_27' | translate}}" replace-spaces-with-dashes="false" text="newStarred"></tags-input>
         </div>
-        
+
         <div class="modal-footer">
             <button class="btn btn-primary" ng-click="$close(starredItems)" >{{'DLG_BTN_OK' | translate}}</button>
             <button class="btn btn-warning" ng-click="$dismiss()">{{'DLG_BTN_CANCEL' | translate}}</button>
@@ -357,7 +357,7 @@
               <li role="presentation"><a class="btn btn-default" ng-click="doAction('pause',item)"><span class="glyphicon glyphicon-pause"></span> {{'ML_PAUSE' | translate}}</a></li>
               <li role="presentation"><a class="btn btn-default" ng-click="doAction('stop',item)"><span class="glyphicon glyphicon-stop"></span> {{'ML_STOP' | translate}}</a></li>
               <li role="presentation" class="divider"></li>
-              
+
               <li role="presentation" class="uib-dropdown" uib-dropdown>
                   <a class="btn btn-default" role="button" uib-dropdown-toggle >
                     <span class="glyphicon glyphicon-remove"></span> {{'ML_REMOVE' | translate}} <span class="caret"></span>
@@ -369,7 +369,7 @@
                     <a class="btn btn-default" ng-click="doAction('removedatatorrent',item)" ><span class="glyphicon glyphicon-remove"></span> {{'ML_REMOVE_AND' | translate}} {{'ML_DELETE_DATATORRENT' | translate}}</a>
                   </div>
                 </li>
-                                
+
               <li role="presentation" class="divider"></li>
               <li role="presentation"><a class="btn btn-default" ng-click="doAction('queuedown',item)"><span class="glyphicon glyphicon-chevron-up"></span> {{'ML_QUEUEUP' | translate}}</a></li>
               <li role="presentation"><a class="btn btn-default" ng-click="doAction('queueup',item)"><span class="glyphicon glyphicon-chevron-down"></span> {{'ML_QUEUEDOWN' | translate}}</a></li>

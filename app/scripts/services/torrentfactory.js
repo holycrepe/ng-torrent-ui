@@ -4,7 +4,7 @@
  * @ngdoc factory
  * @name ngTorrentUiApp.Torrent
  * @description
- * # Factory for creation of Torrent objects 
+ * # Factory for creation of Torrent objects
  * Factory in the ngTorrentUiApp.
  */
 angular.module('ngTorrentUiApp')
@@ -24,7 +24,7 @@ angular.module('ngTorrentUiApp')
                 return name;
             }
         };
-        
+
         var cleanName = function(name) {
             return name.toLowerCase().replace(/s?([0-9]{1,2})[x|e|-]([0-9]{1,2})/,'').replace(/(bdrip|brrip|cam|dttrip|dvdrip|dvdscr|dvd|fs|hdtv|hdtvrip|hq|pdtv|satrip|dvbrip|r5|r6|ts|tc|tvrip|vhsrip|vhsscr|ws|aac|ac3|dd|dsp|dts|lc|ld|md|mp3|xvid|720p|1080p|fs|internal|limited|proper|stv|subbed|tma|tnz|silent|tls|gbm|fsh|rev|trl|upz|unrated|webrip|ws|mkv|avi|mov|mp4|mp3|iso|x264|x265|h264|h265)/g,'').trim();
         };
@@ -113,7 +113,7 @@ angular.module('ngTorrentUiApp')
             this.appUpdateUrl = appUpdateUrl;
             this.savePath = savePath;
             this.additionalData = additionalData;
-            
+
             this.decodedName = decodeName(this.name);
             this.getStatuses();
             this.isStarred = false;
@@ -136,10 +136,10 @@ angular.module('ngTorrentUiApp')
         Torrent.prototype.getMagnetURI = function(longUri) {
             var i = 0;
             var link = 'magnet:?xt=urn:btih:' + this.hash;
-             if (longUri) { 
-                link += '&dn=' + encodeURIComponent(this.name); 
+             if (longUri) {
+                link += '&dn=' + encodeURIComponent(this.name);
                 link += '&xl=' + encodeURIComponent(this.size);
-              
+
                 if (this.props && this.props.trackers) {
                     var trackers = this.props.trackers.split('\r\n');
                     for (i=0;i<trackers.length;i++){

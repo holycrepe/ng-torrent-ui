@@ -103,8 +103,8 @@ angular.module('ngTorrentUiApp')
                         ret.reject(err);
                     }
                 );
-                
-                return ret.promise;  
+
+                return ret.promise;
             },
             _torrents: function() {
                 return $resource(data.url + '.' + '?:action:data&token=:token&cid=:cid:opt&t=:t', {
@@ -260,7 +260,7 @@ angular.module('ngTorrentUiApp')
             getFileDownloadUrl: function(torrent,file) {
                 if(torrent.streamId && torrentServerService.settingsMap['webui.uconnect_enable'] && file.size === file.sizeDownloaded) {
                     return '/proxy?sid=' + torrent.streamId + '&file=' + file.hash + '&disposition=ATTACHMENT&service=DOWNLOAD&qos=0';
-                } 
+                }
                 return undefined;
             },
             setLabel: function(hashes, label) {
@@ -276,7 +276,7 @@ angular.module('ngTorrentUiApp')
                 });
             },
             getSettings: function() {
-                return this.actions()._getsettings().$promise;  
+                return this.actions()._getsettings().$promise;
             },
             setSetting: function(setting, value) {
                 return torrentServerService.setSettings([
@@ -373,6 +373,6 @@ angular.module('ngTorrentUiApp')
                 return torrent;
             }
         };
-        
+
         return torrentServerService;
     });

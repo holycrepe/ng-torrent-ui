@@ -67,7 +67,7 @@ angular.module('ngTorrentUiApp')
         $scope.newtorrentfiles = [];
         var labelarrayfornewtorrents = [];
         var maxQueuePosition = 0;
-        
+
         $scope.uploadDropSupported = true;
 
         var saveCookie = function(cookieName,value) {
@@ -188,7 +188,7 @@ angular.module('ngTorrentUiApp')
                     }
                 }
             };
-            
+
             var openAddDialog = function(directories) {
                 $scope.directories = directories;
 
@@ -202,7 +202,7 @@ angular.module('ngTorrentUiApp')
                     add(res.dir?res.dir:'0', res.path?res.path:'', res.label, maxQueuePosition);
                 });
             };
-            
+
             if (torrentServerService.supports.getDownloadDirectories === true) {
                 torrentServerService.getDownloadDirectories().then(openAddDialog);
             } else {
@@ -279,13 +279,13 @@ angular.module('ngTorrentUiApp')
             }
 
             var service;
-            
+
             if (action === 'removeDefault') {
-                service = torrentServerService.removeTorrent(); 
+                service = torrentServerService.removeTorrent();
             } else {
                 service = torrentServerService.actions()[action];
             }
-            
+
             if (service) {
                 var ts = service({
                     hash: hashes
@@ -461,15 +461,15 @@ angular.module('ngTorrentUiApp')
             var filter = '';
             var fuzzy = false;
             var starredName = $scope.starredNamesStrings[torrent.decodedName];
-            
+
             if (starredName && $scope.filters.name !== starredName) {
                 filter = starredName;
                 fuzzy = false;
-            } else if (!starredName && $scope.filters.name !== torrent.cleanedName){ 
+            } else if (!starredName && $scope.filters.name !== torrent.cleanedName){
                 filter = torrent.cleanedName;
                 fuzzy = true;
             }
-            
+
             $scope.filters.name = filter;
             $scope.filters.fuzzy = fuzzy;
             $scope.doFilter();
@@ -482,21 +482,21 @@ angular.module('ngTorrentUiApp')
                     $scope.starredNamesStrings = $parentScope.starredNamesStrings;
                     $scope.doAction = function(action,torrent) {
                         $parentScope.doAction(action,torrent,function() {
-                            $scope.$close();    
-                        }); 
+                            $scope.$close();
+                        });
                     };
                     $scope.search = function(torrent) {
                       $parentScope.searchSimilar(torrent);
-                      $scope.$close();  
+                      $scope.$close();
                     };
-                    
+
                 }],
                 windowClass: 'actionsModal',
                 backdropClass: 'gray-background',
                 templateUrl: 'actionsModal.html',
                 backdrop: true
             });
-            
+
             console.log(modalInstance);
         };
 
@@ -725,7 +725,7 @@ angular.module('ngTorrentUiApp')
 
         $scope.starredNamesStrings = {};
         var starredNamesStrings = $scope.starredNamesStrings;
-         
+
         var isStarred = function(name) {
             var array = $scope.starredItems;
             if (array) {
@@ -804,7 +804,7 @@ angular.module('ngTorrentUiApp')
                                 var labelToAdd = labelarrayfornewtorrents[labelToAddIndex].label;
                                 labelarrayfornewtorrents.splice(labelToAddIndex, 1);
                                 $scope.setLabel(labelToAdd,torrent);
-                            } 
+                            }
                         }
                     }
                 }
