@@ -687,14 +687,16 @@ angular.module('ngTorrentUiApp')
                             }
                         }
                         if (matches && filters.name && filters.name !== '') {
-                            var name = torrent.name;
-                            matches = name.search(new RegExp(filters.name, 'i')) > -1;
-                        
-                            if (!matches && filters.fuzzy) {
-                                name = torrent.decodedName;
-                                var subStrscore = name.subCompare($scope.filters.name);
-                                matches = (subStrscore.found === 1);
-                            }
+                          var nameRegex = new RegExp(filters.name, 'i');
+                          var doFilterName = function (name) {
+                            return (name.search(nameRegex) > -1);
+                          };
+                          matches = doFilterName(torrent.name) || doFilterName(torrent.label);
+                          if (!matches && filters.fuzzy) {
+                              name = torrent.decodedName;
+                              var subStrscore = name.subCompare($scope.filters.name);
+                              matches = (subStrscore.found === 1);
+                          }
                         }
                         return matches;
                     }
