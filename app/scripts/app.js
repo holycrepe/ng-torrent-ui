@@ -32,7 +32,9 @@ angular
         decodeNames: 'decodeNames',
         starredItems: 'starredItems',
         lastFilters: 'lastFilters',
-        lastSorter: 'lastSorter'
+        lastSorter: 'lastSorter',
+        options: 'options',
+        lastQueueMovement: 'lastQueueMovement'
     }).run(['ntuConst', function(ntuConst) {
       // don't touch the line below, version will be injected
       ntuConst.version = undefined;

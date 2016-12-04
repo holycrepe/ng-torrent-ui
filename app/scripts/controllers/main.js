@@ -12,6 +12,19 @@ angular.module('ngTorrentUiApp')
     .controller('TorrentsCtrl', function($scope, $window, $uibModal, $filter, $timeout, $log, torrentServerService, Torrent, toastr, $cookies, ntuConst) {
 
         $scope.headerHeight = 350;
+        $scope.queueMovement = {
+          delta: 1,
+          maxRequestSize: 175,
+          isRelative: false,
+          recurseIfRelative: true,
+          useCustomDelta: false
+        };
+        $scope.options = {
+          autoReload: {
+            timeout: 5000,
+            enabled: true
+          }
+        };
         // On window resize => resize the app
         $scope.setListHeight = function() {
             var newHeight = $window.innerHeight - 260; // - $scope.headerHeight;
@@ -52,7 +65,11 @@ angular.module('ngTorrentUiApp')
             $cookies.put(cookieName, obj);
             return value;
         };
-        
+
+        var saveOptions = function() {
+          saveCookie(ntuConst.options, $scope.options);
+        };
+
         var loadCookie = function(cookieName) {
             return angular.fromJson($cookies.get(cookieName));
         };
@@ -60,7 +77,13 @@ angular.module('ngTorrentUiApp')
         if ($cookies.get(ntuConst.starredItems)) {
             $scope.starredItems = loadCookie(ntuConst.starredItems);
         }
-        
+        if ($cookies.get(ntuConst.options)) {
+            angular.merge($scope.options, loadCookie(ntuConst.options));
+        }
+        if ($cookies.get(ntuConst.lastQueueMovement)) {
+            angular.merge($scope.queueMovement, loadCookie(ntuConst.lastQueueMovement));
+        }
+
         var labelColors = ['#B0C4DE', '#B0E0E6', '#87CEEB', '#87CEFA', '#00BFFF', '#1E90FF', '#6495ED', '#4682B4', '#4169E1', '#0000FF', '#0000CD', '#6A5ACD', '#7B68EE', '#00008B', '#000080', '#191970'];
         var updateLabelColorsMap = function(labels) {
             if (labels) {
