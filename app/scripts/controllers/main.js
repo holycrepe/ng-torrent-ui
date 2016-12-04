@@ -740,6 +740,11 @@ angular.module('ngTorrentUiApp')
             return false;
         };
 
+        $scope.updateAutoReload = function() {
+          saveOptions();
+          $scope.reload();
+        };
+
         $scope.reload = function(manual) {
             if ($scope.refreshing) {
                 return;
@@ -830,8 +835,8 @@ angular.module('ngTorrentUiApp')
                 //toastr.info('Refreshing done!',null,{timeOut: 1500});
                 //toastr.clear(reloadingMsg);
 
-                if (manual !== true && $scope.autoreloadEnabled === true && $scope.autoreloadTimeout > -1) {
-                    reloadTimeout = $timeout($scope.reload, $scope.autoreloadTimeout);
+                if (manual !== true && $scope.options.autoReload.enabled === true && $scope.options.autoReload.timeout > -1) {
+                    reloadTimeout = $timeout($scope.reload, $scope.options.autoReload.timeout);
                 }
                 $scope.torrentsMap = torrentsMap;
                 updateTorrentDetails($scope.lastTorrentDetails);
