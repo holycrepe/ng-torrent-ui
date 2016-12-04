@@ -647,41 +647,41 @@ angular.module('ngTorrentUiApp')
                     function(torrent /*, index */ ) {
                         var matches = true;
                         if (typeof filters.label !== 'undefined') {
-                            matches = torrent.label === filters.label;
+                            matches &= torrent.label === filters.label;
                         }
                         if (filters.selected) {
-                            matches = torrent.selected === true;
+                            matches &= torrent.selected === true;
                         }
                         if (filters.status) {
                             switch (filters.status) {
                                 case 'completed':
                                     {
-                                        matches = torrent.isStatusCompleted();
+                                        matches &= torrent.isStatusCompleted();
                                         break;
                                     }
                                 case 'downloading':
                                     {
-                                        matches = torrent.isStatusDownloading();
+                                        matches &= torrent.isStatusDownloading();
                                         break;
                                     }
                                 case 'paused':
                                     {
-                                        matches = torrent.isStatusPaused();
+                                        matches &= torrent.isStatusPaused();
                                         break;
                                     }
                                 case 'queued':
                                     {
-                                        matches = torrent.isStatusQueued();
+                                        matches &= torrent.isStatusQueued();
                                         break;
                                     }
                                 case 'seeding':
                                     {
-                                        matches = torrent.isStatusSeeding();
+                                        matches &= torrent.isStatusSeeding();
                                         break;
                                     }
                                 case 'error':
                                     {
-                                        matches = torrent.isStatusError();
+                                        matches &= torrent.isStatusError();
                                         break;
                                     }
                             }
