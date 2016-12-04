@@ -144,7 +144,7 @@
         </span>
       </div>
     </div>
-    <div class="form-group input-group-sm col-lg-4 col-sm-6">
+    <div class="form-group input-group-sm col-lg-3 col-sm-4">
       <div class="form-control input-group info-text">
         <div class="pull-left">{{torrents.length}} {{'STM_TORRENTS' | translate}} </div>
         <div class="pull-right"><span class="glyphicon glyphicon-circle-arrow-up"></span> {{uploadSpeed | formatBytes}}/s  | <span class="glyphicon glyphicon-circle-arrow-down"></span> {{downloadSpeed | formatBytes}}/s</div></div>
@@ -175,12 +175,25 @@
         </div>
       </div>
     </fieldset>
-
-      <fieldset class="form-group btn-toolbar action-toolbar col-lg-1 col-sm-2 col-xs-3" ng-disabled="selectedtorrents.length < 1">
-        <div class="btn-group btn-group-sm btn-group-justified">
-          <a role="button" class="btn btn-default" ng-click="doAction('queueup')" title="{{'ML_QUEUEUP' | translate}}"><span class="glyphicon glyphicon-chevron-up"></span> </a>
-          <a role="button" class="btn btn-default" ng-click="doAction('queuedown')" title="{{'ML_QUEUEDOWN' | translate}}"><span class="glyphicon glyphicon-chevron-down"></span> </a>
-      </div>
+      <fieldset class="form-group btn-toolbar action-toolbar col-lg-2 col-sm-3 col-xs-4">
+        <div class="input-group input-group-sm filter-autoreload">
+          <span class="input-group-addon">
+            <span title="Delta is relative to an existing torrent's queue order" style="cursor: pointer;">
+              <input type="checkbox" ng-model="queueMovement.isRelative" ng-checked="queueMovement.isRelative === true" ng-true-value="true" ng-false-value="false" ng-change="updateQueueMovement()" ng-disabled="queueMovement.useCustomDelta === false" id="queueMovementRelative" style="cursor: pointer;">
+              <label for="queueMovementRelative" style="cursor: pointer;">Relative &nbsp; </label>
+            </span>
+            <span title="Recursively move torrents if `Relative` movement is enabled" style="cursor: pointer;">
+              <input type="checkbox" ng-model="queueMovement.recurseIfRelative" ng-checked="queueMovement.recurseIfRelative === true" ng-true-value="true" ng-false-value="false" ng-change="updateQueueMovement()" id="queueMovementRecurse" style="cursor: pointer;" ng-disabled="(queueMovement.isRelative === false || queueMovement.useCustomDelta === false)">
+              <label for="queueMovementRecurse" style="cursor: pointer;">Recurse &nbsp; </label>
+            </span>
+            <input type="checkbox" ng-model="queueMovement.useCustomDelta" ng-checked="queueMovement.useCustomDelta === true" ng-true-value="true" ng-false-value="false" ng-change="updateQueueMovement()" style="cursor: pointer;" title="Use custom Delta as specified in the input field to the right. Otherwise, a delta of 1 is used">
+            <input type="text" ng-model="queueMovement.delta" ng-change="updateQueueMovement()" ng-disabled="queueMovement.useCustomDelta === false" style="width: 50px" title="Delta: Number of positions to move the selected items in the queue. If relative is enabled, this indicates the queue position of the existing torrent to move before/after" />
+          </span>
+          <div class="btn-group btn-group-sm btn-group-justified" ng-disabled="selectedtorrents.length < 1">
+            <a role="button" class="btn btn-default" ng-click="doMove()" title="{{'ML_QUEUEUP' | translate}}"><span class="glyphicon glyphicon-chevron-up"></span> </a>
+            <a role="button" class="btn btn-default" ng-click="doMove(true)" title="{{'ML_QUEUEDOWN' | translate}}"><span class="glyphicon glyphicon-chevron-down"></span> </a>
+          </div>
+        </div>
     </fieldset>
 
       <fieldset class="form-group btn-toolbar action-toolbar col-lg-2 col-sm-3 col-xs-2" ng-disabled="selectedtorrents.length < 1">

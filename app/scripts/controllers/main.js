@@ -1,6 +1,18 @@
 /* global angular */
 'use strict';
 
+Array.prototype.chunk = function(groupsize){
+  var sets = [], chunks, i = 0;
+  chunks = this.length / groupsize;
+
+  while(i < chunks){
+    sets[i] = this.splice(0,groupsize);
+    i++;
+  }
+
+  return sets;
+};
+
 /**
  * @ngdoc function
  * @name ngTorrentUiApp.controller:MainCtrl
@@ -50,8 +62,6 @@ angular.module('ngTorrentUiApp')
 
         var torrentsMap = Torrent.cache;
         var reloadTimeout;
-        $scope.autoreloadTimeout = 5000;
-        $scope.autoreloadEnabled = ($scope.autoreloadTimeout > 0);
 
         $scope.newtorrent = '';
         $scope.newtorrentfiles = [];
@@ -226,12 +236,28 @@ angular.module('ngTorrentUiApp')
             }
         };
 
-        function getSelectedHashes(item) {
+
+      /**
+       *
+       * @param orderByQueuePosition
+       * @param orderByReverse
+       * @returns {Array<Torrent>}
+       */
+        function getSelectedTorrents(orderByQueuePosition, orderByReverse) {
+          var items = $scope.selectedtorrents;
+          if (orderByQueuePosition) {
+            items = $filter('orderBy')(items, 'torrentQueueOrder', orderByReverse);
+          }
+          return items;
+        }
+
+        function getSelectedHashes(item, orderByQueuePosition, orderByReverse) {
             var hashes = [];
             if (!item) {
-                angular.forEach($scope.selectedtorrents, function(value /* , key */ ) {
-                    hashes.push(value.hash);
-                });
+              var items = getSelectedTorrents(orderByQueuePosition, orderByReverse);
+              angular.forEach(items, function(value /* , key */ ) {
+                  hashes.push(value.hash);
+              });
             } else {
                 hashes.push(item.hash);
             }
@@ -275,6 +301,99 @@ angular.module('ngTorrentUiApp')
                     timeOut: 1000
                 });
             }
+        };
+
+      var executeQueueMoveFactory = function(service, hashChunk, action, delta, j, hashChunks) {
+        return function() {
+          var hashChunkStart = j * $scope.queueMovement.maxRequestSize;
+          console.debug(action + ": Executing Steps: " + delta + "; Chunk #" + (j + 1) + "/" + hashChunks + ": " + (hashChunkStart + 1) + "/" + (hashChunkStart + hashChunk.length));
+          for (var i=0;i<delta; i++) {
+            var ts = service({
+              hash: hashChunk
+            });
+            //debugger;
+            ts.$promise.then(function () {
+              // debugger;
+            });
+          }
+          //console.debug(action + ": # Executed  Steps: " + delta + "; Chunk #" + (j + 1) + "/" + hashChunks + ": " + (hashChunkStart + 1) + "/" + (hashChunkStart + hashChunk.length));
+        };
+      };
+
+        $scope.updateQueueMovement = function() {
+          saveCookie(ntuConst.lastQueueMovement, $scope.queueMovement);
+        };
+
+        $scope.doMove = function(isQueueDown, offset) {
+          var i, j;
+          var action = isQueueDown ? 'queuedown' : 'queueup',
+              orderByReverse = action == 'queuedown' || action == 'queuetop',
+              isRelativeDelta = $scope.queueMovement.useCustomDelta && $scope.queueMovement.isRelative,
+              delta = Number($scope.queueMovement.useCustomDelta ? $scope.queueMovement.delta : 1),
+              items = getSelectedTorrents(true, orderByReverse);
+          if (Number.isNaN(delta)) {
+            delta = 1;
+          }
+          var relativeDelta = 0,
+              relativeDeltaAdj = delta;
+          offset = Number(offset);
+          if (Number.isNaN(offset)) {
+            offset = 0;
+          }
+          if (offset > 0) {
+            if (isQueueDown) {
+              items.splice(offset);
+            } else {
+              items.splice(0, offset);
+            }
+          }
+          if (isRelativeDelta) {
+            if (items.length) {
+              var item = items[isQueueDown ? items.length -1 : 0];
+              delta = Math.abs(item.torrentQueueOrder - delta);
+              delta += (isQueueDown ? -1 : -1);
+              var lastNumber = item.torrentQueueOrder-1;
+              for (i=0,j=items.length;i<j;i++) {
+                if (items[i].torrentQueueOrder != lastNumber + 1) {
+                  break;
+                }
+                lastNumber++;
+                relativeDelta ++;
+              }
+              if (!isQueueDown) {
+                relativeDeltaAdj += relativeDelta;// * (isQueueDown ? -1 : 1);
+              }
+            }
+          }
+
+          var hashes = items.map(function (torrent) { return torrent.hash; });
+          hashes = hashes.chunk($scope.queueMovement.maxRequestSize);
+          var hashChunks = hashes.length;
+          var service = torrentServerService.actions()[action];
+          var delay = 0;
+          for (j=0;j<hashChunks;j++) {
+            setTimeout(executeQueueMoveFactory(service, hashes[j], action, delta, j, hashChunks), delay);
+            delay += delta * (j + 1 < hashChunks ? 100 : 50);
+          }
+
+          setTimeout(function() {
+            if (isRelativeDelta) {
+              $scope.queueMovement.delta = relativeDeltaAdj;
+              $scope.updateQueueMovement();
+              //items.splice(0, relativeDelta);
+              //$scope.selectedtorrents.splice(0, relativeDelta);
+            }
+            $scope.reload(true);
+            if (isRelativeDelta && $scope.queueMovement.recurseIfRelative && items.length > relativeDelta) {
+              delay += 5000;
+              console.debug("Recursively moving " + items.length + " torrents in " + delay + "ms");
+              //debugger;
+              setTimeout(function () { $scope.doMove(isQueueDown, offset + relativeDelta); }, delay);
+            }
+            else {
+              console.debug("Reloaded queue after Queue Move");
+            }
+          }, delay);
         };
 
         $scope.setLabel = function(value, item) {
