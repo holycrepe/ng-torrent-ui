@@ -669,9 +669,19 @@ angular.module('ngTorrentUiApp')
                                         matches &= torrent.isStatusPaused();
                                         break;
                                     }
+                                case 'stopped':
+                                    {
+                                        matches &= torrent.isStatusStopped();
+                                        break;
+                                    }
                                 case 'queued':
                                     {
                                         matches &= torrent.isStatusQueued();
+                                        break;
+                                    }
+                                case 'incomplete':
+                                    {
+                                        matches &= torrent.isStatusIncomplete();
                                         break;
                                     }
                                 case 'seeding':

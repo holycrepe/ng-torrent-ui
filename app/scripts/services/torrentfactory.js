@@ -204,8 +204,14 @@ angular.module('ngTorrentUiApp')
         Torrent.prototype.isStatusPaused = function() {
             return this.getStatusFlag(32);
         };
+        Torrent.prototype.isStatusStopped = function() {
+            return this.statusMessage.indexOf("Stopped") > -1;
+        };
         Torrent.prototype.isStatusQueued = function() {
             return this.getStatusFlag(64) && !this.isStatusDownloading();
+        };
+        Torrent.prototype.isStatusIncomplete = function() {
+          return this.torrentQueueOrder > -1;
         };
         Torrent.prototype.isStatusLoaded = function() {
             return this.getStatusFlag(128);
