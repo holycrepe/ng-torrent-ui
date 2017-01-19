@@ -1,0 +1,17 @@
+{
+    "compileOnSave": true,
+    "compilerOptions": {
+        "module": "es2015",
+        "rootDir": "app/scripts",
+        "sourceMap": true,
+        "target": "ES6",
+        "pretty": true,
+        "preserveConstEnums": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true
+    },
+    "filesGlob": [
+        "./app/scripts/**/*.ts",
+        "!node_modules/**"
+    ]
+}
