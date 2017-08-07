@@ -15,6 +15,9 @@ module.exports = function (grunt) {
   // Time how long tasks take. Can help when optimizing build times
   require('time-grunt')(grunt);
 
+  // Typscript support
+  grunt.loadNpmTasks('grunt-ts');
+
   // Require the proxy package  https://github.com/drewzboto/grunt-connect-proxy
   // to test locally outside uTorrent
 
@@ -41,9 +44,6 @@ module.exports = function (grunt) {
 
   // Converting .html templates in javascript for better cdn importing
   grunt.loadNpmTasks('grunt-html2js');
-
-  // Typscript support
-  grunt.loadNpmTasks('grunt-typescript');
 
   // Configurable paths for the application
   var appConfig = {
