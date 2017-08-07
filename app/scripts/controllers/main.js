@@ -13,6 +13,8 @@ Array.prototype.chunk = function(groupsize){
   return sets;
 };
 
+
+
 /**
  * @ngdoc function
  * @name ngTorrentUiApp.controller:MainCtrl
@@ -22,6 +24,21 @@ Array.prototype.chunk = function(groupsize){
  */
 angular.module('ngTorrentUiApp')
     .controller('TorrentsCtrl', function($scope, $window, $uibModal, $filter, $timeout, $log, torrentServerService, Torrent, toastr, $cookies, ntuConst) {
+
+      //var LoopCounter = Puchalapalli.Execution.Counters.LoopCounter;
+      var Counters = apEMP.Classes.Counters;
+      var LoopCounter = Counters.LoopCounter;
+      var Range = Counters.Range;
+
+      function runLoopCounterTest() {
+        var array = [1, 2, 3, 4, 5];
+        var counter = new LoopCounter(array);
+        for (;counter.active;counter.step()) {
+          console.log(`Looping with index ${counter.index}`)
+        }
+        console.log("Loop complete");
+      }
+      runLoopCounterTest();
 
         $scope.headerHeight = 350;
         $scope.queueMovement = {
@@ -303,18 +320,36 @@ angular.module('ngTorrentUiApp')
             }
         };
 
-      var executeQueueMoveFactory = function(service, hashChunk, action, delta, j, hashChunks) {
+      /**
+       *
+       * @param service
+       * @param hashChunk
+       * @param action
+       * @param delta
+       * @param counts {
+       *    {
+       *        chunks: LoopCounter,
+       *        chunk: Range
+       *    }
+       * }
+       * @returns {Function}
+       */
+        var executeQueueMoveFactory = function(service, hashChunk, action, delta, counts) {
         return function() {
           var hashChunkStart = j * $scope.queueMovement.maxRequestSize;
-          console.debug(action + ": Executing Steps: " + delta + "; Chunk #" + (j + 1) + "/" + hashChunks + ": " + (hashChunkStart + 1) + "/" + (hashChunkStart + hashChunk.length));
+          console.debug(action + ": Executing Queue Move: Delta=" + delta + "; Chunk #" + (j + 1) + "/" + hashChunks + ": " + (hashChunkStart + 1) + "/" + (hashChunkStart + hashChunk.length), hashChunk );
           for (var i=0;i<delta; i++) {
             var ts = service({
               hash: hashChunk
             });
             //debugger;
-            ts.$promise.then(function () {
-              // debugger;
-            });
+            var execute = function (step) {
+              ts.$promise.then(function (a) {
+                console.debug(action + ": Executed Step #" + step + "/" + delta);
+                // debugger;
+              });
+            };
+            execute(i + 1);
           }
           //console.debug(action + ": # Executed  Steps: " + delta + "; Chunk #" + (j + 1) + "/" + hashChunks + ": " + (hashChunkStart + 1) + "/" + (hashChunkStart + hashChunk.length));
         };
@@ -368,14 +403,24 @@ angular.module('ngTorrentUiApp')
 
           var hashes = items.map(function (torrent) { return torrent.hash; });
           hashes = hashes.chunk($scope.queueMovement.maxRequestSize);
-          var hashChunks = hashes.length;
           var service = torrentServerService.actions()[action];
           var delay = 0;
-          for (j=0;j<hashChunks;j++) {
-            setTimeout(executeQueueMoveFactory(service, hashes[j], action, delta, j, hashChunks), delay);
-            delay += delta * (j + 1 < hashChunks ? 100 : 50);
+          const loop = new LoopCounter(hashes);
+          for (; loop.active; loop.step()) {
+            var chunk = hashes[loop.index];
+            var counts = {
+              chunks: loop,
+              chunk: new Range(loop.index * $scope.queueMovement.maxRequestSize + 1, chunk)
+            };
+            console.debug("Queuing Move for Chunk #"
+              + counts.chunks.current
+              + (delay ? " in " + delay + " ms" : "")
+              + " for Hashes "
+              + counts.chunk.start + "-" + counts.chunk.end);
+            setTimeout(executeQueueMoveFactory(service, chunk, action, delta, angular.copy(counts)), delay);
+            delay += delta * (counts.chunks.current < counts.chunks.total ? 100 : 50);
           }
-
+          console.debug("Queuing Recursive Move in " + delay + " ms");
           setTimeout(function() {
             if (isRelativeDelta) {
               $scope.queueMovement.delta = relativeDeltaAdj;
