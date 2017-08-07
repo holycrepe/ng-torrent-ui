@@ -57,8 +57,8 @@ module.exports = function (grunt) {
     utorrentClassicWebUIArchive: 'resources/utorrent-webui.2013052820184444.zip'
   };
 
-  var torrentHost = grunt.option('torrent-host') || 'localhost';
-  var torrentPort = grunt.option('torrent-port') || 58055;
+  var torrentHost = grunt.option('torrent-host') || 'utorrent';
+  var torrentPort = grunt.option('torrent-port') || 65255;
 
   // Define the configuration for all the tasks
   grunt.initConfig({
